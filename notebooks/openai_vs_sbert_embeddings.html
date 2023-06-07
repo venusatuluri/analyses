@@ -14580,13 +14580,14 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="Abstract">Abstract<a class="anchor-link" href="#Abstract">&#182;</a></h1><p>This notebook is a simple comparison of OpenAI vs SBERT embeddings. I'm using a small subset of <a href="https://pile.eleuther.ai/">"The Pile"</a>, which is a diverse open-source language modeling dataset.</p>
-<h3 id="The-expectation">The expectation<a class="anchor-link" href="#The-expectation">&#182;</a></h3><ol>
+<h1 id="OpenAI-vs-SBERT-embeddings-on-similar-vs-dissimilar-texts">OpenAI vs SBERT embeddings on similar vs dissimilar texts<a class="anchor-link" href="#OpenAI-vs-SBERT-embeddings-on-similar-vs-dissimilar-texts">&#182;</a></h1><p>This notebook is a simple comparison of OpenAI vs SBERT embeddings. I'm using a small subset of <a href="https://pile.eleuther.ai/">"The Pile"</a>, which is a diverse open-source language modeling dataset.</p>
+<h2 id="The-expectation">The expectation<a class="anchor-link" href="#The-expectation">&#182;</a></h2><ol>
 <li>We expect that texts that are from the same document should have high similarity in their embeddings while texts that are not should have low similarity. We test for this by chunking up documents from different slices of The Pile, and compare their self-similarity vs cross-similarity.</li>
-<li>If we collect a dataset of embeddings from across a diverse set of texts, we intuitively expect the embedding to make use of most of the k-dimensional space. Truly testing for this is hard, due to the curse of dimensionality, but we can at least look at each dimension in isolation and see whether there's reasonable variance within that dimension among our set. 
-### The results</li>
-<li>OpenAI embeddings of very different types of text have similarity in the range (0.65, 0.7), while texts from the same document are in the range (0.82, 0.88). The corresponding ranges for SBERT are (0.4, 0.6) and (-0.1, 0.1). </li>
-<li>One hypothesis about why OpenAI's embeddings yield such high similarity even for very dissimilar texts: Compared to SBERT's embeddings, the variance of each dimension in OpenAI's embeddings is much smaller; meaning that no matter what the input text is, the value assigned to most dimensions is in a narrow range. </li>
+<li>If we collect a dataset of embeddings from across a diverse set of texts, we intuitively expect the embedding to make use of most of the k-dimensional space. Truly testing for this is hard, due to the curse of dimensionality, but we can at least look at each dimension in isolation and see whether there's reasonable variance within that dimension among our set. </li>
+</ol>
+<h2 id="The-findings">The findings<a class="anchor-link" href="#The-findings">&#182;</a></h2><ol>
+<li>OpenAI embeddings yield very high similarity (in the range 0.65 - 0.7) even for very dissimilar texts, while SBERT gives similarities that are close to 0 for such examples. </li>
+<li>Compared to SBERT's embeddings, the variance of each dimension in OpenAI's embeddings is much smaller; meaning that no matter what the input text is, the value assigned to most dimensions is in a narrower range. </li>
 </ol>
 <h2 id="Speculation">Speculation<a class="anchor-link" href="#Speculation">&#182;</a></h2><p>I speculate that this behavior of OpenAI's embeddings is why Andrej Karpathy <a href="https://twitter.com/karpathy/status/1647025230546886658">felt the need to use SVM</a> for nearest neighbor lookups, instead of simple cosine similarity. I suspect that if one were to use embeddings which fill out the space better, like SBERT, the improvement that comes from using SVM (which is costly) for nearest-neighbor lookups will be small.</p>
 
